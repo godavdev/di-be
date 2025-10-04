@@ -6,14 +6,14 @@ import { PrismaService } from 'src/shared/prisma/prisma.service';
 export class BooksService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createBookDto: CreateBookDto) {
+  async create(createBookDto: CreateBookDto & { userId: number }) {
     const createdBook = await this.prisma.book.create({
       data: {
         author: createBookDto.author,
         title: createBookDto.title,
         isbn: createBookDto.isbn,
         releaseDate: createBookDto.releaseDate,
-        userId: 0,
+        userId: createBookDto.userId,
       },
     });
     return createdBook.id;
