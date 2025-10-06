@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { CreateBookDto } from './dto/create-book.dto';
 import { PrismaService } from 'src/shared/prisma/prisma.service';
+import { Book } from './entities/book.entity';
 
 @Injectable()
 export class BooksService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createBookDto: CreateBookDto & { userId: number }) {
+  async create(
+    createBookDto: CreateBookDto & { userId: number },
+  ): Promise<Book> {
     const createdBook = await this.prisma.book.create({
       data: {
         author: createBookDto.author,
@@ -16,17 +19,23 @@ export class BooksService {
         userId: createBookDto.userId,
       },
     });
-    return createdBook.id;
+    return { ...createdBook };
   }
 
-  async findAll() {
+  async findAll(): Promise<Book[]> {
     return await this.prisma.book.findMany();
   }
 
-  async remove(id: number) {
-    await this.prisma.book.delete({
+  async findById(id: number): Promise<Book | null> {
+    return await this.prisma.book.findUnique({
       where: { id },
     });
-    return true;
+  }
+
+  async remove(id: number): Promise<Book> {
+    const deletedBook = await this.prisma.book.delete({
+      where: { id },
+    });
+    return { ...deletedBook };
   }
 }

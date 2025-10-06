@@ -7,6 +7,7 @@ import { apiReference } from '@scalar/nestjs-api-reference';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
+  app.enableCors();
   const config = new DocumentBuilder()
     .setTitle('Digital Ignition Backend')
     .setDescription('The Digital Ignition Backend API description')
@@ -15,6 +16,6 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   app.use('/docs', apiReference({ content: document }));
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 4321);
 }
 bootstrap();

@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   UseGuards,
   Request,
+  NotFoundException,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -31,8 +32,19 @@ export class BooksController {
   }
 
   @Get()
+  @UseGuards(AuthGuard)
   async findAll() {
     return await this.booksService.findAll();
+  }
+
+  @Get(':id')
+  @UseGuards(AuthGuard)
+  async findById(id: number) {
+    const res = await this.booksService.findById(id);
+    if (res === null) {
+      throw new NotFoundException('Book not found');
+    }
+    return res;
   }
 
   // localhost:3000/books/{id} -> id es string
